@@ -76,25 +76,24 @@ function w = ranksvm_with_sim(X_,OMat,SMat,Costs_for_O,Costs_for_S,w,opt)
   % out1 is the same exact implementation as what was originally designed
   % out2 needs to take into account the pairs that are highly similar
   
-  disp('The size of the X matrix')
-  disp(size(X))
-  disp('The sixe of the w matrix')
-  disp(size(w))
+  %disp('The size of the X matrix')
+  %disp(size(X))
+  %disp('The sixe of the w matrix')
+  %disp(size(w))
   
   out1 = 1-A*(X*w);
-  out2 = -(S*(X*w));
+  out2 = (S*(X*w));
   
   % Now concatenate the vectors together.
   out = [out1; out2];
-  size(out)
   % We need to keep track of the pairs that are chosen for the experiments,
   % so thusly concatenate the two vectors together so they will be the same
   % for our experiments.
   A = [A;S];
-  disp('The size of the A Matrix')
-  disp(size(A))
+  % disp('The size of the A Matrix')
+  % disp(size(A))
   C = [Costs_for_O;Costs_for_S];
-  size(C)
+  % size(C)
   while 1
     iter = iter + 1;
     if iter > opt.iter_max_Newton;
