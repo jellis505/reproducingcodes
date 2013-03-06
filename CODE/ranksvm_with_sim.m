@@ -48,12 +48,12 @@ function w = ranksvm_with_sim(X_,OMat,SMat,Costs_for_O,Costs_for_S,w,opt)
   global X A
   X = X_; A = OMat; S = SMat; % To avoid passing theses matrices as arguments to subfunctions
 
-  if nargin < 5       % Assign the options to their default values
+  if nargin < 7       % Assign the options to their default values
     opt = [];
   end;
   if ~isfield(opt,'lin_cg'),            opt.lin_cg = 0;                    end;
   if ~isfield(opt,'iter_max_Newton'),   opt.iter_max_Newton = 10;          end;  
-  if ~isfield(opt,'prec'),              opt.prec = 1e-4;                   end;  
+  if ~isfield(opt,'prec'),              opt.prec = 1e-7;                   end;  
   if ~isfield(opt,'cg_prec'),           opt.cg_prec = 1e-3;                end;  
   if ~isfield(opt,'cg_it'),             opt.cg_it = 20;                    end;  
   
@@ -64,7 +64,7 @@ function w = ranksvm_with_sim(X_,OMat,SMat,Costs_for_O,Costs_for_S,w,opt)
     warning('Large problem: you should consider trying the lin_cg option')
   end;
   
-  if nargin<4
+  if nargin<6
     w = zeros(d,1); 
   end; 
   iter = 0;
@@ -75,18 +75,26 @@ function w = ranksvm_with_sim(X_,OMat,SMat,Costs_for_O,Costs_for_S,w,opt)
   % ranksvm works for my purposes
   % out1 is the same exact implementation as what was originally designed
   % out2 needs to take into account the pairs that are highly similar
+  
+  disp('The size of the X matrix')
+  disp(size(X))
+  disp('The sixe of the w matrix')
+  disp(size(w))
+  
   out1 = 1-A*(X*w);
   out2 = -(S*(X*w));
   
   % Now concatenate the vectors together.
   out = [out1; out2];
-  
+  size(out)
   % We need to keep track of the pairs that are chosen for the experiments,
   % so thusly concatenate the two vectors together so they will be the same
   % for our experiments.
-  A = [A:S];
-  
-  
+  A = [A;S];
+  disp('The size of the A Matrix')
+  disp(size(A))
+  C = [Costs_for_O;Costs_for_S];
+  size(C)
   while 1
     iter = iter + 1;
     if iter > opt.iter_max_Newton;
