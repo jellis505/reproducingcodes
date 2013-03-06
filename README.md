@@ -5,6 +5,13 @@ Project Repo for Reproducing Codes Class
 Joe Ellis PhD Candidate
 Columbia Univeristy - DVMM Lab
 
-CandidatePapers:
-	- This folder holds three candidate papers that will be discussed in class
-	  and one will be decided to try to reproduce the code.
+CODE
+====
+This folder holds the code that is used to reporduce the implementation of the paper that can be seen below.
+D. Parikh and K. Grauman,
+Relative Attributes,
+International Conference on Computer Vision (ICCV), 2011.
+
+DATA
+=====
+This folder will be committed once the reproduction effort is completed.
