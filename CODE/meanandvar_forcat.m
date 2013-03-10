@@ -48,7 +48,7 @@ AVG_COV = sum(Covariances,3)/length(seen);
 
 % Now we have to find the average distance between the means 
 
-dm = zeros(1,size(category_order));
+dm = zeros(1,size(category_order,1));
 
 for j = 1:size(category_order,1)
     % This section finds the means and sorts the average distance between
@@ -131,13 +131,8 @@ for k = 1:length(unseen)
         
         % Give it the average covariance of all of the elements
         Covariances(:,:,class) = AVG_COV;
-        
-        
-        
     end
 end    
-disp(means)
-disp(Covariances)
         
         
     
