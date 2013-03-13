@@ -21,7 +21,7 @@ accuracy = zeros(1,num_iter);
 % load the models that we need to run the models
 load('gistandlab.mat');
 load('category_order_pubfig.mat');
-load('..\..\DATA\pubfig\data.mat');
+load('../../DATA/pubfig/data.mat');
 category_order = relative_ordering;
 
 
