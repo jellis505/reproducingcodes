@@ -36,7 +36,6 @@ for k = 1:length(seen)
     
     % for loop to iterate over the sections of the training_samples
     Covariances(:,:,class) = cov(Training_Samples(:,:,class));
-    
 end
 
 % Now we need to find the average covariance mat for all the seen samples
@@ -58,7 +57,7 @@ for j = 1:size(category_order,1)
     for z = 1:length(sorted_means)-1
         diff = diff + abs(sorted_means(z)-sorted_means(z+1));
     end
-    dm(j) = diff/length(seen);
+    dm(j) = diff/(length(seen)-1);
 end
 
 % We need to create a category ordering of only the categories available
@@ -82,22 +81,43 @@ for k = 1:length(unseen)
         [max_rank max_idx] = max(new_category_order(j,:));
         [min_rank min_idx] = min(new_category_order(j,:));
         
-        if attr_rank >= max_rank
+        
+        if ismember(attr_rank,new_category_order(j,:)) == 1;
+            vect = (attr_rank == new_category_order(j,:));
+            idx = find(vect);
+            means(1,j,class) = means(1,j,seen(idx(1)));
+            %disp(means(1,j,class));
+            
+            
+        elseif attr_rank > max_rank;
             % Do some stuff
             max_mean = means(1,j,seen(max_idx(1)));
             means(1,j,class) = max_mean + dm(j);
+            %disp(means(1,j,class));
             
-        elseif attr_rank <= min_rank
+        %elseif attr_rank == max_rank
+            % Do some stuff
+        %    max_mean = means(1,j,seen(max_idx(1)));
+        %    means(1,j,class) = max_mean;
+            
+        elseif attr_rank < min_rank
             % Do some stuff
             % Now we have to find the average distances between the means
              min_mean = means(1,j,seen(min_idx(1)));
              means(1,j,class) = min_mean - dm(j);
-        
+             %disp(means(1,j,class));
+             
+        %elseif attr_rank == min_rank
+            % Do some stuff
+            % Now we have to find the average distances between the means
+        %     min_mean = means(1,j,seen(min_idx(1)));
+        %     means(1,j,class) = min_mean - dm(j);
+            
         else
             % Find the index of the elements one above and below those
             % elements
             row_vec = new_category_order(j,:);
-            min_cand = row_vec < attr_rank;
+            min_cand = row_vec < attr_rank-2;
             value = 0;
             min_use_index = 1;
             for a = 1:length(min_cand)
@@ -111,10 +131,10 @@ for k = 1:length(unseen)
             lower_u = means(1,j,seen(min_use_index));
             
             % Here we have the values for the max used
-            max_cand = row_vec > attr_rank;
+            max_cand = row_vec > attr_rank + 2;
             value = 9;
             max_use_index = 1;
-            for a = 1:length(min_cand)
+            for a = 1:length(max_cand)
                 if max_cand(a) == 1
                     if row_vec(a) < value;
                         max_use_index = a;
@@ -126,16 +146,32 @@ for k = 1:length(unseen)
             
             % This solves for the mean for this class
             means(1,j,class) = (higher_u + lower_u)/2;
-    
+            %disp(means(1,j,class));
         end
         
         % Give it the average covariance of all of the elements
         Covariances(:,:,class) = AVG_COV;
     end
-end    
-        
-        
+end
+
+
+% I need to see what is getting FUCKED UP HERE
+
+for k = 1:length(unseen)
     
+    % Get the seen variable index
+    class = unseen(k);
+    
+    % Find the means of the seen a
+    %means(:,:,class) = mean(Training_Samples(:,:,class));
+    truemean = mean(Training_Samples(:,:,class));
+    % for loop to iterate over the sections of the training_samples
+    %Covariances(:,:,class) = cov(Training_Samples(:,:,class));
+    
+end
+% matlab is returning non positive definite matrices for me.  Therefore, I
+% need to add a bit to the diagonal.
+
     
     
     

@@ -15,8 +15,11 @@ function [O,S] = Create_O_and_S_Mats2(category_order,used_for_training,class_lab
 % class_labels = the class_labels of each image and corresponds to
 %   extracted features
 num_categories = 6;
-
 train_by_class = zeros(num_classes,30);
+
+% O and S intiate
+O = zeros(1,length(class_labels),6);
+S = zeros(1,length(class_labels),6);
 
 % Create the train_by_class matrix to create the o and s matrix for ranking
 % functions
@@ -87,7 +90,7 @@ for l = 1:6
     % Every 4 variables we will need to move forward in the matrix here so
     %   we then have to move forward by 4 on each iteration of the category
     for on_class = 1:num_classes
-        if ismember(on_class,unseen)
+        if ismember(on_class,unseen) == 1
             str = sprintf('Not using class %d for training',on_class);
             disp(str);
         else

@@ -1,0 +1,3 @@
+Images can be downloaded from their original source: http://people.csail.mit.edu/torralba/code/spatialenvelope/
+
+Direct link to downloadable folder of images: http://people.csail.mit.edu/torralba/code/spatialenvelope/spatial_envelope_256x256_static_8outdoorcategories.zip

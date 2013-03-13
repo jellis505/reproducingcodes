@@ -42,8 +42,18 @@ function w = ranksvm_with_sim(X_,OMat,SMat,Costs_for_O,Costs_for_S,w,opt)
 % Costs_for_O this has the value of the cost for each preference pair
 % Costs_for_S this has the value of the cost for each preference pair
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
 
+    oldO = OMat;
+    oldS = SMat;
 
+  if size(OMat,1) == 1
+      OMat = [];
+  end
+  
+  if size(SMat,1) == 1
+      SMat = [];
+  end
 
   global X A
   X = X_; A = OMat; S = SMat; % To avoid passing theses matrices as arguments to subfunctions
@@ -58,7 +68,7 @@ function w = ranksvm_with_sim(X_,OMat,SMat,Costs_for_O,Costs_for_S,w,opt)
   if ~isfield(opt,'cg_it'),             opt.cg_it = 20;                    end;  
   
   d = size(X,2);
-  n = size(A,1);
+  n = size([A;S],1);
   
   if (d*n>1e9) & (opt.lin_cg==0)
     warning('Large problem: you should consider trying the lin_cg option')
@@ -81,9 +91,20 @@ function w = ranksvm_with_sim(X_,OMat,SMat,Costs_for_O,Costs_for_S,w,opt)
   %disp('The sixe of the w matrix')
   %disp(size(w))
   
-  out1 = 1-A*(X*w);
-  out2 = (S*(X*w));
-  
+  % This is the section of the code that sets up the work
+  if size(oldO,1) == 1
+    %out1 = 1-A*(X*w);
+    out2 = -(S*(X*w));
+    out1 = [];
+  elseif size(oldS,1) == 1
+    out1 = 1-A*(X*w);
+    %out2 = (S*(X*w));
+    out2 = [];
+  else
+    out1 = 1-A*(X*w);
+    out2 = -(S*(X*w));
+  end 
+    
   % Now concatenate the vectors together.
   out = [out1; out2];
   % We need to keep track of the pairs that are chosen for the experiments,
@@ -92,8 +113,9 @@ function w = ranksvm_with_sim(X_,OMat,SMat,Costs_for_O,Costs_for_S,w,opt)
   A = [A;S];
   % disp('The size of the A Matrix')
   % disp(size(A))
-  C = [Costs_for_O;Costs_for_S];
-  % size(C)
+  % C = [Costs_for_O;Costs_for_S];
+  
+  C = 0.1*ones(size(A,1),1);
   while 1
     iter = iter + 1;
     if iter > opt.iter_max_Newton;
