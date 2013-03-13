@@ -131,7 +131,7 @@ for k = 1:length(unseen)
             lower_u = means(1,j,seen(min_use_index));
             
             % Here we have the values for the max used
-            max_cand = row_vec > attr_rank + 2;
+            max_cand = row_vec > attr_rank+2;
             value = 9;
             max_use_index = 1;
             for a = 1:length(max_cand)
@@ -155,7 +155,7 @@ for k = 1:length(unseen)
 end
 
 
-% I need to see what is getting FUCKED UP HERE
+% I need to see what is getting messed up here
 
 for k = 1:length(unseen)
     

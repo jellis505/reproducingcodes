@@ -14,7 +14,7 @@ num_unseen = 2;
 trainpics = 30;
 num_iter = 10;
 held_out_attributes = 0;
-labeled_pairs = 15;
+labeled_pairs = 4;
 % This is the number of iterations we want to do
 accuracy = zeros(1,num_iter);
 
