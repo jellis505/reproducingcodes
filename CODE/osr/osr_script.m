@@ -22,7 +22,7 @@ accuracy = zeros(1,num_iter);
 % load the models that we need to run the models
 load('osr_gist.mat');
 load('category_order_osr.mat');
-load('..\..\DATA\osr\data.mat');
+load('../../DATA/osr/data.mat');
 category_order = relative_ordering;
 
 
