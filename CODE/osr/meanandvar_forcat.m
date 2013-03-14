@@ -2,7 +2,10 @@
 % Created by Joe Ellis for the Reproduction Code Class
 % Reproducing Relative Attributes
 
-function [means, Covariances] = meanandvar_forcat(Training_Samples,unseen,category_order,num_classes)
+function [means, Covariances] = meanandvar_forcat(Training_Samples,unseen,category_order,num_classes, looseness_constraint)
+
+% The looseness constraint should be the looseless-1
+looseness_constraint = looseness_constraint - 1;
 
 % variables
 % means = 2-d matrix each row is a mean of the labels should be 8x6 rows
@@ -117,7 +120,7 @@ for k = 1:length(unseen)
             % Find the index of the elements one above and below those
             % elements
             row_vec = new_category_order(j,:);
-            min_cand = row_vec < attr_rank-2;
+            min_cand = row_vec < attr_rank - looseness_constraint;
             value = 0;
             min_use_index = 1;
             for a = 1:length(min_cand)
@@ -131,7 +134,7 @@ for k = 1:length(unseen)
             lower_u = means(1,j,seen(min_use_index));
             
             % Here we have the values for the max used
-            max_cand = row_vec > attr_rank+2;
+            max_cand = row_vec > attr_rank + looseness_constraint;
             value = 9;
             max_use_index = 1;
             for a = 1:length(max_cand)

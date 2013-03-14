@@ -15,6 +15,7 @@ trainpics = 30;
 num_iter = 10;
 held_out_attributes = 0;
 labeled_pairs = 4;
+looseness_constraint = 1;
 % This is the number of iterations we want to do
 accuracy = zeros(1,num_iter);
 
@@ -69,7 +70,7 @@ for iter = 1:num_iter
         if O_length > 1
             w = ranksvm_with_sim(feat,O(1:O_length,:,l),S(1:S_length,:,l),Costs_for_O,Costs_for_S);
             %w = testrank(feat,O(1:O_length,:,l),S(1:S_length,:,l),Costs_for_O,Costs_for_S);
-            weights(:,l) = w*4;
+            weights(:,l) = w*2;
         else
             l = l-1;
         end
@@ -104,7 +105,7 @@ for iter = 1:num_iter
     % leave out
     
     % Calculate the means and covariances from the samples
-    [means, Covariances] = meanandvar_forcat(Train_samples,unseen,new_cat_order,8);
+    [means, Covariances] = meanandvar_forcat(Train_samples,unseen,new_cat_order,8,looseness_constraint);
     
     % Classify the predicted features from the system
     accuracy(iter) = BayesClass_RelAtt(relative_att_predictions,class_labels,means,Covariances,used_for_training,unseen);
