@@ -96,6 +96,7 @@ for z = 1:num_classes
      end
 end
 
+%{
 % Now we need to get the mix of the 4 pictures that should all be together
 % Now set up a vector of the possible seen images
 combo1 = floor(1+((rand(1,att_combos)).*length(seen)));
@@ -109,12 +110,34 @@ for z = 1:att_combos
     end
     
 end
+%}
 
-% 
- for z = 1:size(test_combos,1)
-            on_class = test_combos(z,1);
-            compared_class = test_combos(z,2);
+% Now this will set up the vecotrs that we have for training
+rand_seen = randperm(length(seen));
+test_combos = [];
+test_combos(1,1) = seen(rand_seen(1)); test_combos(1,2) = seen(rand_seen(2));
+test_combos(2,1) = seen(rand_seen(3)); test_combos(2,2) = seen(rand_seen(4));
+test_combos(3,1) = seen(rand_seen(5)); test_combos(3,2) = seen(rand_seen(6));
+test_combos(4,1) = seen(rand_seen(2)); test_combos(4,2) = seen(rand_seen(3));
+test_combos(5,1) = seen(rand_seen(1)); test_combos(5,2) = seen(rand_seen(3));
+test_combos(6,1) = seen(rand_seen(2)); test_combos(6,2) = seen(rand_seen(4));
+test_combos(7,1) = seen(rand_seen(3)); test_combos(7,2) = seen(rand_seen(5));
+test_combos(8,1) = seen(rand_seen(4)); test_combos(8,2) = seen(rand_seen(6));
+test_combos(9,1) = seen(rand_seen(5)); test_combos(9,2) = seen(rand_seen(1));
+test_combos(10,1) = seen(rand_seen(6)); test_combos(10,2) = seen(rand_seen(2));
+test_combos(11,1) = seen(rand_seen(5)); test_combos(11,2) = seen(rand_seen(1));
+test_combos(12,1) = seen(rand_seen(4)); test_combos(12,2) = seen(rand_seen(2));
+test_combos(13,1) = seen(rand_seen(1)); test_combos(13,2) = seen(rand_seen(4));
+test_combos(14,1) = seen(rand_seen(2)); test_combos(14,2) = seen(rand_seen(5));
+test_combos(15,1) = seen(rand_seen(3)); test_combos(15,2) = seen(rand_seen(2));
+test_combos(16,1) = seen(rand_seen(4)); test_combos(16,2) = seen(rand_seen(5));
+disp('These are the test combos');
+disp(test_combos);
 
+for z = 1:size(test_combos,1)
+    on_class = test_combos(z,1);
+    compared_class = test_combos(z,2);
+    
     
     % Do this for every attribute
     for l = 1:6

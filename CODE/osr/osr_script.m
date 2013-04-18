@@ -14,7 +14,7 @@ num_unseen = 2;
 trainpics = 30;
 num_iter = 10;
 held_out_attributes = 0;
-labeled_pairs = 4;
+labeled_pairs = 10;
 looseness_constraint = 1;
 % This is the number of iterations we want to do
 accuracy = zeros(1,num_iter);
@@ -24,7 +24,6 @@ load('osr_gist.mat');
 load('category_order_osr.mat');
 load('../../DATA/osr/data.mat');
 category_order = relative_ordering;
-
 
 for iter = 1:num_iter
     
@@ -68,8 +67,8 @@ for iter = 1:num_iter
         Costs_for_S = .1*ones(S_length,1);
         
         if O_length > 1
-            w = ranksvm_with_sim(feat,O(1:O_length,:,l),S(1:S_length,:,l),Costs_for_O,Costs_for_S);
-            %w = testrank(feat,O(1:O_length,:,l),S(1:S_length,:,l),Costs_for_O,Costs_for_S);
+            w = ranksvm_with_sim(osr_gist_Mat,O(1:O_length-1,:,l),S(1:S_length,:,l),Costs_for_O,Costs_for_S);
+            %w = testrank(feat,O(1:O_length-1,:,l),S(1:S_length,:,l),Costs_for_O,Costs_for_S);
             weights(:,l) = w*2;
         else
             l = l-1;
@@ -94,19 +93,18 @@ for iter = 1:num_iter
     
     % Get the predictions based on the outputs from rank svm
     % Use there trained data
-    %relative_att_predictions = feat*new_relative_att_predictor;
+    % relative_att_predictions = feat*new_relative_att_predictor;
     % Use my trained data
-    relative_att_predictions = osr_gist_Mat*new_weights;
-
+    %relative_att_predictions = osr_gist_Mat*new_weights;
     % Seperate the training samples from the other training samples
     Train_samples = GetTrainingSample_per_category(relative_att_predictions,class_labels,used_for_training);
     
     % This section of the code we will choose lines from the attributes to
     % leave out
+
     
     % Calculate the means and covariances from the samples
     [means, Covariances] = meanandvar_forcat(Train_samples,unseen,new_cat_order,8,looseness_constraint);
-    
     % Classify the predicted features from the system
     accuracy(iter) = BayesClass_RelAtt(relative_att_predictions,class_labels,means,Covariances,used_for_training,unseen);
     disp(accuracy(iter))

@@ -61,6 +61,7 @@ for j = 1:size(category_order,1)
         diff = diff + abs(sorted_means(z)-sorted_means(z+1));
     end
     dm(j) = diff/(length(seen)-1);
+    dm
 end
 
 % We need to create a category ordering of only the categories available
@@ -84,37 +85,36 @@ for k = 1:length(unseen)
         [max_rank max_idx] = max(new_category_order(j,:));
         [min_rank min_idx] = min(new_category_order(j,:));
         
-        
-        if ismember(attr_rank,new_category_order(j,:)) == 1;
-            vect = (attr_rank == new_category_order(j,:));
-            idx = find(vect);
-            means(1,j,class) = means(1,j,seen(idx(1)));
+        %if ismember(attr_rank,new_category_order(j,:)) == 1;
+        %    vect = (attr_rank == new_category_order(j,:));
+        %    idx = find(vect);
+        %    means(1,j,class) = means(1,j,seen(idx(1)));
             %disp(means(1,j,class));
             
             
-        elseif attr_rank > max_rank;
+        if attr_rank > max_rank;
             % Do some stuff
             max_mean = means(1,j,seen(max_idx(1)));
             means(1,j,class) = max_mean + dm(j);
             %disp(means(1,j,class));
             
-        %elseif attr_rank == max_rank
+        elseif attr_rank == max_rank
             % Do some stuff
-        %    max_mean = means(1,j,seen(max_idx(1)));
-        %    means(1,j,class) = max_mean;
+            max_mean = means(1,j,seen(max_idx(1)));
+            means(1,j,class) = max_mean - dm(j)/2;
             
         elseif attr_rank < min_rank
             % Do some stuff
             % Now we have to find the average distances between the means
              min_mean = means(1,j,seen(min_idx(1)));
-             means(1,j,class) = min_mean - dm(j);
+             means(1,j,class) = min_mean + dm(j)/2;
              %disp(means(1,j,class));
              
-        %elseif attr_rank == min_rank
+        elseif attr_rank == min_rank
             % Do some stuff
             % Now we have to find the average distances between the means
-        %     min_mean = means(1,j,seen(min_idx(1)));
-        %     means(1,j,class) = min_mean - dm(j);
+             min_mean = means(1,j,seen(min_idx(1)));
+             means(1,j,class) = min_mean - dm(j);
             
         else
             % Find the index of the elements one above and below those
