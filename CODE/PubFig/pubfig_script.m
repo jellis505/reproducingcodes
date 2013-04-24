@@ -100,9 +100,6 @@ for iter = 1:num_iter
     % Seperate the training samples from the other training samples
     Train_samples = GetTrainingSample_per_category(relative_att_predictions,class_labels,used_for_training);
     
-    % This section of the code we will choose lines from the attributes to
-    % leave out
-    
     % Calculate the means and covariances from the samples
     [means, Covariances] = meanandvar_forcat(Train_samples,unseen,new_cat_order,8,looseness_constraint);
     

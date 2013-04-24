@@ -61,8 +61,10 @@ for j = 1:size(category_order,1)
         diff = diff + abs(sorted_means(z)-sorted_means(z+1));
     end
     dm(j) = diff/(length(seen)-1);
-    dm
 end
+
+disp('The differences between the elements for each attribute');
+dm
 
 % We need to create a category ordering of only the categories available
 % not the unseen categories
@@ -100,21 +102,36 @@ for k = 1:length(unseen)
             
         elseif attr_rank == max_rank
             % Do some stuff
-            max_mean = means(1,j,seen(max_idx(1)));
-            means(1,j,class) = max_mean - dm(j)/2;
+            new_rank = attr_rank - 1;
+            idx = find(new_category_order(j,:) == new_rank);
+            if isempty(idx) == 0    
+                one_less_mean = means(1,j,seen(idx(1)));
+                means(1,j,class) = one_less_mean + dm(j);
+            else
+                max_mean = means(1,j,seen(max_idx(1)));
+                means(1,j,class) = max_mean;
+            end
+                
             
         elseif attr_rank < min_rank
             % Do some stuff
             % Now we have to find the average distances between the means
              min_mean = means(1,j,seen(min_idx(1)));
-             means(1,j,class) = min_mean + dm(j)/2;
+             means(1,j,class) = min_mean + dm(j);
              %disp(means(1,j,class));
              
         elseif attr_rank == min_rank
             % Do some stuff
             % Now we have to find the average distances between the means
-             min_mean = means(1,j,seen(min_idx(1)));
-             means(1,j,class) = min_mean - dm(j);
+             new_rank = attr_rank + 1;
+             idx = find(new_category_order(j,:) == new_rank);
+             if isempty(idx) == 0    
+                one_less_mean = means(1,j,seen(idx(1)));
+                means(1,j,class) = one_less_mean + dm(j);
+             else
+                min_mean = means(1,j,seen(min_idx(1)));
+                means(1,j,class) = min_mean;
+             end
             
         else
             % Find the index of the elements one above and below those
@@ -160,11 +177,9 @@ end
 
 % I need to see what is getting messed up here
 
-for k = 1:length(unseen)
-    
+for k = 1:length(unseen)    
     % Get the seen variable index
     class = unseen(k);
-    
     % Find the means of the seen a
     %means(:,:,class) = mean(Training_Samples(:,:,class));
     truemean = mean(Training_Samples(:,:,class));

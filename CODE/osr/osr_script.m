@@ -10,7 +10,7 @@ clear all;
 
 
 % These are the num of unseen classes and training images per class
-num_unseen = 2;
+num_unseen = 0;
 trainpics = 30;
 num_iter = 10;
 held_out_attributes = 0;
@@ -95,19 +95,41 @@ for iter = 1:num_iter
     % Use there trained data
     % relative_att_predictions = feat*new_relative_att_predictor;
     % Use my trained data
-    %relative_att_predictions = osr_gist_Mat*new_weights;
+    relative_att_predictions = osr_gist_Mat*new_weights;
     % Seperate the training samples from the other training samples
     Train_samples = GetTrainingSample_per_category(relative_att_predictions,class_labels,used_for_training);
     
-    % This section of the code we will choose lines from the attributes to
-    % leave out
-
-    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Debug %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Calculate the means and covariances from the samples
+    unseen = [];
     [means, Covariances] = meanandvar_forcat(Train_samples,unseen,new_cat_order,8,looseness_constraint);
+    
+    % This is for debug to find the problem with the unseen scategories
+    unseen = randperm(8,2);
+    means_unseen = meanandvar_forcat(Train_samples,unseen,new_cat_order,8,looseness_constraint);
+    
+    % This section will find the difference between the values of the means
+    disp('The unseen values are')
+    unseen
+    disp('Actual Means');
+    means
+    disp('Difference between the means');
+    disp(means_unseen - means);
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
     % Classify the predicted features from the system
-    accuracy(iter) = BayesClass_RelAtt(relative_att_predictions,class_labels,means,Covariances,used_for_training,unseen);
+    accuracy(iter) = BayesClass_RelAtt(relative_att_predictions,class_labels,means_unseen,Covariances,used_for_training,unseen);
+    disp('unseen accuracy for means found');
     disp(accuracy(iter))
+    
+    other_acc = BayesClass_RelAtt(relative_att_predictions,class_labels,means,Covariances,used_for_training,unseen);
+    disp('unseen accuracy for derived means')
+    disp(other_acc);
+    disp('The relative ordering of the attributes for each image');
+    category_order
 end
 
     total_acc = mean(accuracy);
