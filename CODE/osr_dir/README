@@ -1,0 +1,27 @@
+% Relative Attributes %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This program performs the tests that are described in the paper that
+% corresponds to the citaiton below.
+% D. Parikh and K. Grauman. "Relative Attributes". International Conference
+% on Computer Vision (ICCV), 2011
+% http://filebox.ece.vt.edu/~parikh/relative.html
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%
+% Created by: Joseph Ellis
+% PhD Candidate -- Columbia University
+% jge2105@columbia.edu
+%%%%%%%%%%%%%%%%%%
+
+Requirements:
+Matlab
+
+Running the Code:
+To run the code 'cd' into the 'osr_dir', and then type osr_script into the
+matlab command interface to run the tests.  The parameters for the tests can be 
+accessed at the top of "osr_script.m" around line 17.  The choice to run the 
+tests with the learned weights provided by the authors or weights learned from 
+the training scheme within this code is available.  Directions for switching 
+between the two can be seen at line 107 in "osr_scripts.m"
+
+Questions:
+Please email jge2105@columbia.edu  

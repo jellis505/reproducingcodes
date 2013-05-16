@@ -20,7 +20,7 @@ total = 0;
 for j = 1:length(predicts)
     % We don't want to use the variables that are used for training so
     % let's skip those in test
-    if used_for_training(j) == 0 && ismember(ground_truth(j),unseen) == 1
+    if used_for_training(j) == 0
         
         %{
         % This is for debug purposes

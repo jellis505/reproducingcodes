@@ -117,7 +117,7 @@ for k = 1:length(unseen)
             % Do some stuff
             % Now we have to find the average distances between the means
              min_mean = means(1,j,seen(min_idx(1)));
-             means(1,j,class) = min_mean + dm(j);
+             means(1,j,class) = min_mean - dm(j);
              %disp(means(1,j,class));
              
         elseif attr_rank == min_rank
@@ -126,8 +126,8 @@ for k = 1:length(unseen)
              new_rank = attr_rank + 1;
              idx = find(new_category_order(j,:) == new_rank);
              if isempty(idx) == 0    
-                one_less_mean = means(1,j,seen(idx(1)));
-                means(1,j,class) = one_less_mean + dm(j);
+                one_more_mean = means(1,j,seen(idx(1)));
+                means(1,j,class) = one_more_mean - dm(j);
              else
                 min_mean = means(1,j,seen(min_idx(1)));
                 means(1,j,class) = min_mean;

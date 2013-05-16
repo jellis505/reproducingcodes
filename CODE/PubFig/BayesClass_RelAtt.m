@@ -20,7 +20,15 @@ total = 0;
 for j = 1:length(predicts)
     % We don't want to use the variables that are used for training so
     % let's skip those in test
-    if used_for_training(j) == 0 || ismember(ground_truth(j),unseen) == 1;
+    if used_for_training(j) == 0
+        
+        %{
+        % This is for debug purposes
+        if ismember(ground_truth(j),unseen) == 1
+            disp('This is an unseen variable, and is of class');
+            disp(ground_truth(j));
+        end
+        %}
         
         % For each of the categories find the guassian probability of the
         % each variable and each point
@@ -29,8 +37,24 @@ for j = 1:length(predicts)
             
             % Add a bit of value to the Covariances to insure they are
             % positive definite
-            Covariances(:,:,k) = Covariances(:,:,k) + eye(size(Covariances,1)).*.00001;
-            prob = mvnpdf(predicts(j,:),means(:,:,k),Covariances(:,:,k));
+            Cov_ex = Covariances(:,:,k) + eye(size(Covariances,1)).*.00001;
+            prob = mvnpdf(predicts(j,:),means(:,:,k),Cov_ex);
+            
+            % Debug Purposes
+            % let's calc the distance from the prediction values of the
+            % ranking to the predicted means of the values
+            %{
+            distance = pdist([predicts(j,:);means(:,:,k)],'euclidean');
+            disp('This is the class: ');
+            disp(k);
+            disp('This is the distance: ')
+            disp(distance);
+            disp('The predicted values');
+            disp(predicts(j,:));
+            disp('The mean values of this variable');
+            disp(means(:,:,k));
+            %}
+            
             if prob > best_prob
                 best_prob = prob;
                 app_label = k;
@@ -48,7 +72,4 @@ for j = 1:length(predicts)
 end
 
 accuracy = correct/total;
-        
-        
-        
     

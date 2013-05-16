@@ -4,20 +4,13 @@
 
 clear all;
 
-% load the models that we need to run the models
-load('osr_gist.mat');
-load('category_order_osr.mat');
-load('../../DATA/osr/data.mat');
-
 % These are the num of unseen classes and training images per class
 num_unseen = 0;
 trainpics = 30;
 num_iter = 10;
 held_out_attributes = 0;
-labeled_pairs = 10;
+labeled_pairs = 8;
 looseness_constraint = 1;
-% This is the number of iterations we want to do
-accuracy = zeros(1,num_iter);
 
 % load the models that we need to run the models
 load('osr_gist.mat');
@@ -33,7 +26,8 @@ category_order = relative_ordering;
     % The three possible ways to train the matrices
     %[O,S] = Create_O_and_S_Mats(category_order,used_for_training,class_labels,8);
     %[O,S] = Create_O_and_S_Mats2(relative_ordering,used_for_training,class_labels,8,unseen,trainpics);
-    [O,S] = Create_O_and_S_Mats3(relative_ordering,used_for_training,class_labels,8,unseen,trainpics,labeled_pairs);
+    %[O,S] = Create_O_and_S_Mats3(relative_ordering,used_for_training,class_labels,8,unseen,trainpics,labeled_pairs);
+    [O,S] = Create_O_and_S_Mats(relative_ordering,used_for_training,class_labels,8,unseen,trainpics,labeled_pairs);
     
     % Now we need to train the ranking function, but we have some values in the
     % matrices that will not correspond to the anything becuase some attributes
@@ -68,9 +62,20 @@ category_order = relative_ordering;
         
         if O_length > 1
             w_mine(:,l) = ranksvm_with_sim(osr_gist_Mat,O(1:O_length-1,:,l),S(1:S_length,:,l),Costs_for_O,Costs_for_S);
-            w_theirs(:,l) = testrank(psr_gist_Mat,O(1:O_length-1,:,l),S(1:S_length,:,l),Costs_for_O,Costs_for_S);
+            w_theirs(:,l) = testrank(osr_gist_Mat,O(1:O_length-1,:,l),S(1:S_length,:,l),Costs_for_O,Costs_for_S);
         else
-            l = l-1;
+        % Re-Do the ranking and start over, because we chose category pairs
+        % that did not have the O matrix for a given attribute.
+        
+        % This function creates the O and S matrix used in the ranking algorithm
+        [O,S] = Create_O_and_S_Mats(category_order,used_for_training,class_labels,8,unseen,trainpics,labeled_pairs);
+
+        % initialize the weights matrix that will be learned for ranking
+        weights = zeros(512,6);
+        
+        % re-do the creation of the O and S matrix
+        l = 1;
+        disp('We had to redo the O and S matrix ranking, Pairs chosen were all similar for an attribute');
         end
     end
     

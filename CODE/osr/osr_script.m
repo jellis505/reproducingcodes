@@ -10,11 +10,11 @@ clear all;
 
 
 % These are the num of unseen classes and training images per class
-num_unseen = 0;
+num_unseen = 4;
 trainpics = 30;
 num_iter = 10;
 held_out_attributes = 0;
-labeled_pairs = 10;
+labeled_pairs = 4;
 looseness_constraint = 1;
 % This is the number of iterations we want to do
 accuracy = zeros(1,num_iter);
@@ -25,6 +25,13 @@ load('category_order_osr.mat');
 load('../../DATA/osr/data.mat');
 category_order = relative_ordering;
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Debug %%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%category_order(1,:) = [1 2 2 3 4 4 ];
+%category_order(6,:) = [7 6 6 4 1 3 2 5];
+
+
 for iter = 1:num_iter
     
     % Create a random list of unseen images
@@ -33,8 +40,10 @@ for iter = 1:num_iter
     % The three possible ways to train the matrices
     %[O,S] = Create_O_and_S_Mats(category_order,used_for_training,class_labels,8);
     %[O,S] = Create_O_and_S_Mats2(relative_ordering,used_for_training,class_labels,8,unseen,trainpics);
-    [O,S] = Create_O_and_S_Mats3(relative_ordering,used_for_training,class_labels,8,unseen,trainpics,labeled_pairs);
-    
+    %[O,S] = Create_O_and_S_Mats3(category_order,used_for_training,class_labels,8,unseen,trainpics,labeled_pairs);
+    %[O,S] = Create_O_and_S_Mats4(category_order,used_for_training,class_labels,8,unseen,trainpics,labeled_pairs);
+    % This function creates the O and S matrix used in the ranking algorithm
+    [O,S] = Create_O_and_S_Mats(category_order,used_for_training,class_labels,8,unseen,trainpics,labeled_pairs);
     % Now we need to train the ranking function, but we have some values in the
     % matrices that will not correspond to the anything becuase some attributes
     % will have more nodes with similarity.
@@ -68,10 +77,21 @@ for iter = 1:num_iter
         
         if O_length > 1
             w = ranksvm_with_sim(osr_gist_Mat,O(1:O_length-1,:,l),S(1:S_length,:,l),Costs_for_O,Costs_for_S);
-            %w = testrank(feat,O(1:O_length-1,:,l),S(1:S_length,:,l),Costs_for_O,Costs_for_S);
+            %w = testrank(osr_gist_Mat,O(1:O_length-1,:,l),S(1:S_length,:,l),Costs_for_O,Costs_for_S);
             weights(:,l) = w*2;
         else
-            l = l-1;
+        % Re-Do the ranking and start over, because we chose category pairs
+        % that did not have the O matrix for a given attribute.
+        
+        % This function creates the O and S matrix used in the ranking algorithm
+        [O,S] = Create_O_and_S_Mats(category_order,used_for_training,class_labels,8,unseen,trainpics,labeled_pairs);
+
+        % initialize the weights matrix that will be learned for ranking
+        weights = zeros(512,6);
+        
+        % re-do the creation of the O and S matrix
+        l = 1;
+        disp('We had to redo the O and S matrix ranking, Pairs chosen were all similar for an attribute');
         end
     end
     
@@ -103,11 +123,9 @@ for iter = 1:num_iter
     % Debug %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Calculate the means and covariances from the samples
-    unseen = [];
-    [means, Covariances] = meanandvar_forcat(Train_samples,unseen,new_cat_order,8,looseness_constraint);
+    [means, Covariances] = meanandvar_forcat(Train_samples,[],new_cat_order,8,looseness_constraint);
     
     % This is for debug to find the problem with the unseen scategories
-    unseen = randperm(8,2);
     means_unseen = meanandvar_forcat(Train_samples,unseen,new_cat_order,8,looseness_constraint);
     
     % This section will find the difference between the values of the means
@@ -125,7 +143,7 @@ for iter = 1:num_iter
     disp('unseen accuracy for means found');
     disp(accuracy(iter))
     
-    other_acc = BayesClass_RelAtt(relative_att_predictions,class_labels,means,Covariances,used_for_training,unseen);
+    other_acc = BayesClass_RelAtt_unseen(relative_att_predictions,class_labels,means_unseen,Covariances,used_for_training,unseen);
     disp('unseen accuracy for derived means')
     disp(other_acc);
     disp('The relative ordering of the attributes for each image');
