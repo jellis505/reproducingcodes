@@ -1,13 +1,12 @@
 % This script makes the desired Figures
 figure()
-theirs = [57 57 55 56 55 55];
-mine = [55 54 52 40 40 30];
-x = [6 5 4 3 2 1];
+theirs = [70 65 65 60 57 40];
+mine = [72 66 62 60 51 43];
+x = [0 1 2 3 4 5];
 plot(x,theirs,'r-',x,mine,'b');
-xlabel('# of Attributes Used')
+xlabel('# of Unseen Classes')
 ylabel('Classification Accuracy (%)')
-title('OSR -- # of Attributes Used ');
-axis([0 11 0 80]);
-set(gca,'XTick',[1:11]);
-set(gca,'XDir','Reverse');
-legend('Paper Results','My Results');
+title('Generative Framework Test');
+axis([0 5 0 80]);
+set(gca,'XTick',[1:5]);
+legend('Paper Results','Their Learned Ranks Results');
